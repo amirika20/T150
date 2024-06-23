@@ -8,7 +8,6 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "esModuleInterop": true,
-    "types": ["node", "@types/chart.js"],
     "lib": ["ESNext", "dom"],
     "paths": {
       "@/*": ["./*"]
