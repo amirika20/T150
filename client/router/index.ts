@@ -9,6 +9,7 @@ import ProfileView from "../views/ProfileView.vue";
 import SettingsView from "../views/SettingsView.vue";
 import RankingView from "@/views/RankingView.vue";
 import PRsView from "@/views/PRsView.vue";
+import MITRecordsView from "@/views/MITRecordsView.vue";
 
 const router = createRouter({
   history: createWebHistory(),
@@ -52,6 +53,12 @@ const router = createRouter({
       path: "/pr",
       name: "PRs",
       component: PRsView,
+      meta: { requiresAuth: true },
+    },
+    {
+      path: "/mit",
+      name: "MIT",
+      component: MITRecordsView,
       meta: { requiresAuth: true },
     },
     {

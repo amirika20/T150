@@ -65,7 +65,9 @@ let Routes = (() => {
     let _createWorkout_decorators;
     let _updateWorkout_decorators;
     let _deleteWorkout_decorators;
+    let _getDailyWorkouts_decorators;
     let _getMeter_decorators;
+    let _getMeterByUser_decorators;
     let _getAllMeter_decorators;
     let _postPR_decorators;
     let _getPRs_decorators;
@@ -192,10 +194,22 @@ let Routes = (() => {
                     return { msg: deleted.msg };
                 });
             }
+            getDailyWorkouts(username) {
+                return __awaiter(this, void 0, void 0, function* () {
+                    const id = (yield app_1.User.getUserByUsername(username))._id;
+                    return yield app_1.Workout.getDailyWorkoutByUser(id);
+                });
+            }
             getMeter(session) {
                 return __awaiter(this, void 0, void 0, function* () {
                     const user = app_1.WebSession.getUser(session);
                     const username = (yield app_1.User.getUserById(user)).username;
+                    const meter = app_1.Meter.getMeterByRower(username);
+                    return meter;
+                });
+            }
+            getMeterByUser(username) {
+                return __awaiter(this, void 0, void 0, function* () {
                     const meter = app_1.Meter.getMeterByRower(username);
                     return meter;
                 });
@@ -244,7 +258,9 @@ let Routes = (() => {
             _createWorkout_decorators = [router_1.Router.post("/workouts")];
             _updateWorkout_decorators = [router_1.Router.patch("/workouts/:_id")];
             _deleteWorkout_decorators = [router_1.Router.delete("/workouts/:_id")];
+            _getDailyWorkouts_decorators = [router_1.Router.get("/workouts/daily/:username")];
             _getMeter_decorators = [router_1.Router.get("/meter")];
+            _getMeterByUser_decorators = [router_1.Router.get("/meter/:username")];
             _getAllMeter_decorators = [router_1.Router.get("/ranking")];
             _postPR_decorators = [router_1.Router.post("/prs/:type")];
             _getPRs_decorators = [router_1.Router.get("/prs/ranking/:type")];
@@ -262,7 +278,9 @@ let Routes = (() => {
             __esDecorate(_a, null, _createWorkout_decorators, { kind: "method", name: "createWorkout", static: false, private: false, access: { has: obj => "createWorkout" in obj, get: obj => obj.createWorkout }, metadata: _metadata }, null, _instanceExtraInitializers);
             __esDecorate(_a, null, _updateWorkout_decorators, { kind: "method", name: "updateWorkout", static: false, private: false, access: { has: obj => "updateWorkout" in obj, get: obj => obj.updateWorkout }, metadata: _metadata }, null, _instanceExtraInitializers);
             __esDecorate(_a, null, _deleteWorkout_decorators, { kind: "method", name: "deleteWorkout", static: false, private: false, access: { has: obj => "deleteWorkout" in obj, get: obj => obj.deleteWorkout }, metadata: _metadata }, null, _instanceExtraInitializers);
+            __esDecorate(_a, null, _getDailyWorkouts_decorators, { kind: "method", name: "getDailyWorkouts", static: false, private: false, access: { has: obj => "getDailyWorkouts" in obj, get: obj => obj.getDailyWorkouts }, metadata: _metadata }, null, _instanceExtraInitializers);
             __esDecorate(_a, null, _getMeter_decorators, { kind: "method", name: "getMeter", static: false, private: false, access: { has: obj => "getMeter" in obj, get: obj => obj.getMeter }, metadata: _metadata }, null, _instanceExtraInitializers);
+            __esDecorate(_a, null, _getMeterByUser_decorators, { kind: "method", name: "getMeterByUser", static: false, private: false, access: { has: obj => "getMeterByUser" in obj, get: obj => obj.getMeterByUser }, metadata: _metadata }, null, _instanceExtraInitializers);
             __esDecorate(_a, null, _getAllMeter_decorators, { kind: "method", name: "getAllMeter", static: false, private: false, access: { has: obj => "getAllMeter" in obj, get: obj => obj.getAllMeter }, metadata: _metadata }, null, _instanceExtraInitializers);
             __esDecorate(_a, null, _postPR_decorators, { kind: "method", name: "postPR", static: false, private: false, access: { has: obj => "postPR" in obj, get: obj => obj.postPR }, metadata: _metadata }, null, _instanceExtraInitializers);
             __esDecorate(_a, null, _getPRs_decorators, { kind: "method", name: "getPRs", static: false, private: false, access: { has: obj => "getPRs" in obj, get: obj => obj.getPRs }, metadata: _metadata }, null, _instanceExtraInitializers);

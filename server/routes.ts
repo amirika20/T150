@@ -127,10 +127,22 @@ class Routes {
     return { msg: deleted.msg };
   }
 
+  @Router.get("/workouts/daily/:username")
+  async getDailyWorkouts(username: string) {
+    const id = (await User.getUserByUsername(username))._id;
+    return await Workout.getDailyWorkoutByUser(id);
+  }
+
   @Router.get("/meter")
   async getMeter(session: WebSessionDoc) {
     const user = WebSession.getUser(session);
     const username = (await User.getUserById(user)).username;
+    const meter = Meter.getMeterByRower(username);
+    return meter;
+  }
+
+  @Router.get("/meter/:username")
+  async getMeterByUser(username: string) {
     const meter = Meter.getMeterByRower(username);
     return meter;
   }

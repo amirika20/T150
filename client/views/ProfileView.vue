@@ -6,20 +6,22 @@ import { onBeforeMount, ref } from "vue";
 import router from "@/router";
 import PRForm from "../components/Record/PRForm.vue";
 import PRViewComponent from "@/components/Record/PRViewComponent.vue";
+import ChartComponent from "@/components/Asset/ChartComponent.vue";
 
-const { currentUsername, isLoggedIn, currentSide } = storeToRefs(useUserStore());
+const { currentUsername, currentSide } = storeToRefs(useUserStore());
 const { deleteUser } = useUserStore();
 
 const props = defineProps(["username"]);
 const totalMeter = ref(0);
 const PRs = ref<Array<Record<string, string>>>([]);
 const showConfirmModal = ref(false);
-const side = ref(currentSide.value);
+const side = ref("");
 
 async function fetchData() {
   try {
-    totalMeter.value = await fetchy("/api/meter", "GET");
-    PRs.value = await fetchy(`/api/prs/${currentUsername.value}`, "GET");
+    totalMeter.value = await fetchy(`/api/meter/${props.username}`, "GET");
+    PRs.value = await fetchy(`/api/prs/${props.username}`, "GET");
+    side.value = (await fetchy(`/api/users/${props.username}`, "GET")).side;
   } catch (e) {
     console.log(e);
   }
@@ -43,15 +45,19 @@ onBeforeMount(async () => {
         <p class="username">{{ props.username }}</p>
         <p>{{ side }}</p>
         <p>Total meters: {{ totalMeter }}</p>
-        <button class="button-error pure-button" @click="showConfirmModal = true">Delete User</button>
+        <button v-if="props.username == currentUsername" class="button-error pure-button" @click="showConfirmModal = true">Delete User</button>
       </div>
-      <PRForm />
+      <PRForm v-if="props.username == currentUsername" />
       <div class="pr-list">
         <h3>Personal Records</h3>
         <article v-for="PR in PRs" :key="PR._id" class="pr-item">
           <PRViewComponent :PR="PR" />
         </article>
       </div>
+      <div class="chart-title">
+        <h3>Daily Workout Chart</h3>
+      </div>
+      <ChartComponent :username="props.username" />
     </div>
 
     <div v-if="showConfirmModal" class="modal-overlay" @click.self="showConfirmModal = false">
@@ -145,6 +151,13 @@ button {
   padding: 1em;
   margin-bottom: 1em;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.chart-title {
+  margin-top: 2em;
+  font-weight: bold;
+  font-size: 1.5em;
+  color: #00796b;
 }
 
 .forms-wrapper {

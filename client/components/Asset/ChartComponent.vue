@@ -1,45 +1,92 @@
 <script setup lang="ts">
+import { onBeforeMount, reactive } from "vue";
+import { use } from "echarts/core";
+import { CanvasRenderer } from "echarts/renderers";
+import { LineChart } from "echarts/charts";
+import { GridComponent, TooltipComponent, TitleComponent } from "echarts/components";
+import ECharts from "vue-echarts";
 import { fetchy } from "@/utils/fetchy";
-import { CategoryScale, Chart as ChartJS, Legend, LineElement, LinearScale, PointElement, Title, Tooltip } from "chart.js";
-import { onBeforeMount, reactive, ref } from "vue";
-import { Line } from "vue-chartjs";
-ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
+const props = defineProps(["username"]);
 
-const props = defineProps(["ticker", "timeSeries"]);
-const state = reactive({
-  timeSeries: ref<string>("24hours"),
-  chartData: ref<ChartData | null>(null),
-});
+// Register necessary echarts components
+use([CanvasRenderer, LineChart, GridComponent, TooltipComponent, TitleComponent]);
+
 interface ChartData {
-  labels: string[];
-  datasets: {
-    label: string;
-    backgroundColor: string;
+  xAxis: {
+    type: string;
+    data: string[];
+  };
+  yAxis: {
+    type: string;
+  };
+  series: {
     data: number[];
+    type: string;
+    smooth: boolean;
   }[];
+}
+
+const state = reactive<{
+  chartData: ChartData | null;
+}>({
+  chartData: null,
+});
+
+const filterDate = new Date("2024-06-20");
+
+// Helper function to generate all dates between two dates
+function generateDateRange(startDate: Date, endDate: Date): string[] {
+  const dates = [];
+  let currentDate = new Date(startDate);
+  while (currentDate <= endDate) {
+    dates.push(currentDate.toISOString().split("T")[0]);
+    currentDate.setDate(currentDate.getDate() + 1);
+  }
+  return dates;
 }
 
 async function fetchData() {
   let response;
   try {
-    response = await fetchy(`/api/assets/history/${props.ticker}/${state.timeSeries}`, "GET", {});
-    console.log(`${props.ticker}`);
+    response = await fetchy(`/api/workouts/daily/${props.username}`, "GET", {});
   } catch (_) {
     return;
   }
   if (response) {
-    state.chartData! = {
-      labels: response.dates,
-      datasets: [
+    const filteredResponse = response
+      .filter((entry: { date: string }) => new Date(entry.date) > filterDate)
+      .sort((a: { date: string }, b: { date: string }) => new Date(a.date).getTime() - new Date(b.date).getTime());
+
+    const startDate = filterDate;
+    const endDate = new Date();
+    const allDates = generateDateRange(startDate, endDate);
+
+    const dateToMeterMap = new Map<string, number>();
+    filteredResponse.forEach((entry: { date: string; totalMeters: number }) => {
+      dateToMeterMap.set(entry.date, entry.totalMeters);
+    });
+
+    const seriesData = allDates.map((date) => dateToMeterMap.get(date) || 0);
+
+    state.chartData = {
+      xAxis: {
+        type: "category",
+        data: allDates,
+      },
+      yAxis: {
+        type: "value",
+      },
+      series: [
         {
-          label: "Price",
-          backgroundColor: "#f87979",
-          data: response.prices as number[],
+          data: seriesData,
+          type: "line",
+          smooth: false, // Ensure straight lines between points
         },
       ],
     };
   }
 }
+
 // Fetch data on component mount
 onBeforeMount(async () => {
   await fetchData();
@@ -48,19 +95,19 @@ onBeforeMount(async () => {
 
 <template>
   <div class="chart-component">
-    <div class="radio-buttons">
-      <input type="radio" id="24hours" value="24hours" v-model="state.timeSeries" @change="fetchData()" />
-      <label for="24hours">Last 24 hours</label>
-
-      <input type="radio" id="daily" value="daily" v-model="state.timeSeries" @change="fetchData()" />
-      <label for="daily">Last two months</label>
-
-      <input type="radio" id="monthly" value="monthly" v-model="state.timeSeries" @change="fetchData()" />
-      <label for="monthly">Last five years</label>
-    </div>
-    <Line v-if="state.chartData !== null" :data="state.chartData" />
+    <v-chart :option="state.chartData" v-if="state.chartData !== null" style="width: 100%; height: 400px"></v-chart>
   </div>
 </template>
+
+<script lang="ts">
+import { defineComponent } from "vue";
+
+export default defineComponent({
+  components: {
+    "v-chart": ECharts,
+  },
+});
+</script>
 
 <style scoped>
 .chart-component {
@@ -69,35 +116,5 @@ onBeforeMount(async () => {
   border-radius: 5px;
   padding: 20px;
   margin-top: 20px;
-}
-
-.radio-buttons {
-  display: flex;
-  gap: 15px;
-  margin-bottom: 15px;
-}
-
-input[type="radio"] {
-  display: none;
-}
-
-label {
-  display: block;
-  cursor: pointer;
-  padding: 8px 15px;
-  border-radius: 5px;
-  border: 1px solid #ccc;
-  background-color: #f9f9f9;
-  transition: background-color 0.3s ease;
-}
-
-label:hover {
-  background-color: #e6e6e6;
-}
-
-input[type="radio"]:checked + label {
-  background-color: #27ae60;
-  color: #fff;
-  border-color: #27ae60;
 }
 </style>

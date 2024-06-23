@@ -66,14 +66,24 @@ class WorkoutConcept {
             return { msg: `All '${athlete}''s workouts deleted successfully!` };
         });
     }
-    getTotalMeter(athlete) {
+    getDailyWorkoutByUser(athlete) {
         return __awaiter(this, void 0, void 0, function* () {
-            const workouts = yield this.workouts.readMany({ athlete });
-            let total = 0;
-            for (const workout of workouts) {
-                total += workout.meter;
-            }
-            return total;
+            const workouts = yield this.getWorkouts({ athlete });
+            // Group workouts by workoutDate
+            const groupedWorkouts = workouts.reduce((acc, workout) => {
+                const date = workout.workoutDate;
+                if (!acc[date]) {
+                    acc[date] = [];
+                }
+                acc[date].push(workout);
+                return acc;
+            }, {});
+            // Compute total meters for each day and return the result as a list of objects
+            const dailyTotals = Object.keys(groupedWorkouts).map((date) => ({
+                date,
+                totalMeters: this.compute(groupedWorkouts[date]),
+            }));
+            return dailyTotals;
         });
     }
     isAthlete(user, _id) {
@@ -94,6 +104,39 @@ class WorkoutConcept {
             const workouts = yield this.getWorkouts({ workoutDate: { $gte: oneWeekAgo.toISOString().split("T")[0] } });
             return workouts;
         });
+    }
+    compute(workouts) {
+        let totalMeter = 0;
+        for (const workout of workouts) {
+            if (workout.type === "single") {
+                totalMeter += workout.meter * 1.5;
+            }
+            else if (workout.type === "double/pair") {
+                totalMeter += workout.meter * 1.25;
+            }
+            else if (workout.type === "eight") {
+                totalMeter += workout.meter * 1;
+            }
+            else if (workout.type === "erg") {
+                totalMeter += workout.meter * 1;
+            }
+            else if (workout.type === "bikeerg") {
+                totalMeter += workout.meter * 0.45;
+            }
+            else if (workout.type === "cycling") {
+                totalMeter += workout.meter * 0.34;
+            }
+            else if (workout.type === "lift") {
+                totalMeter += workout.meter * 5000;
+            }
+            else if (workout.type === "swimming") {
+                totalMeter += workout.meter * 3;
+            }
+            else if (workout.type === "running") {
+                totalMeter += workout.meter * 1.5;
+            }
+        }
+        return totalMeter;
     }
     sanitizeUpdate(update) {
         // Make sure the update cannot change the athlete.

@@ -50,7 +50,7 @@ const workoutIcon = computed(() => {
   <div class="workout">
     <div class="workout-details">
       <div class="athlete-type">
-        <p class="athlete">{{ props.workout.athlete }}</p>
+        <RouterLink :to="{ name: 'Profile', params: { username: props.workout.athlete } }" class="athlete">{{ props.workout.athlete }}</RouterLink>
         <p class="workout-type"><i :class="['fas', workoutIcon]"></i> {{ props.workout.type }}</p>
       </div>
       <p class="meter"><i class="fas fa-road"></i> {{ Math.floor(props.workout.meter) }} meters</p>
@@ -103,6 +103,13 @@ const workoutIcon = computed(() => {
   font-weight: bold;
   font-size: 1.2em;
   margin-bottom: 5px;
+  color: #007bff;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.athlete:hover {
+  text-decoration: underline;
 }
 
 .workout-type {

@@ -9,10 +9,9 @@ const props = defineProps(["record"]);
       <!-- Icon for achievements or records -->
     </div>
     <div class="athlete-info">
-      <h2 class="athlete-name">{{ props.record.rower }}</h2>
+      <RouterLink :to="{ name: 'Profile', params: { username: props.record.rower } }" class="athlete">{{ props.record.rower }}</RouterLink>
       <p class="total-meter">
         <i class="fas fa-dumbbell"></i>
-        <!-- Icon for meters or workout -->
         Total Meters: <strong>{{ props.record.meter }}</strong>
       </p>
     </div>
@@ -45,16 +44,23 @@ const props = defineProps(["record"]);
   font-size: 2em; /* Larger icon size */
 }
 
-.athlete-info {
+.athlete-type {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-start;
 }
 
-.athlete-name {
+.athlete {
   font-weight: bold;
   font-size: 1.5em;
-  margin-bottom: 0.5em;
+  margin-bottom: 5px;
+  color: #007bff;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.athlete:hover {
+  text-decoration: underline;
 }
 
 .total-meter {
