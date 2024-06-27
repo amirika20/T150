@@ -88,7 +88,6 @@ section {
   padding: 1em;
   background-color: var(--secondary-bg);
   border-radius: 1em;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .create-post {
@@ -107,14 +106,6 @@ section {
 
 .row h2 {
   margin: 0.5em 0;
-}
-
-article {
-  background-color: var(--base-bg);
-  border-radius: 1em;
-  padding: 1.5em;
-  margin-bottom: 1em;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .posts {

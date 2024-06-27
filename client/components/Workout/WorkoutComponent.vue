@@ -243,4 +243,9 @@ const workoutIcon = computed(() => {
     align-items: flex-start;
   }
 }
+
+li {
+  list-style: none;
+}
+
 </style>
