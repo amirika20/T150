@@ -1,5 +1,11 @@
 <script setup lang="ts">
+import { computed } from "vue";
 const props = defineProps(["record"]);
+
+// Computed property to round the meters
+const roundedMeters = computed(() => {
+  return Math.round(props.record.meter);
+});
 </script>
 
 <template>
@@ -12,7 +18,7 @@ const props = defineProps(["record"]);
       <RouterLink :to="{ name: 'Profile', params: { username: props.record.rower } }" class="athlete">{{ props.record.rower }}</RouterLink>
       <p class="total-meter">
         <i class="fas fa-dumbbell"></i>
-        Total Meters: <strong>{{ props.record.meter }}</strong>
+        Total Meters: <strong>{{ roundedMeters }}</strong>
       </p>
     </div>
   </div>
@@ -20,16 +26,16 @@ const props = defineProps(["record"]);
 
 <style scoped>
 .record-card {
-  background-color: #ffffff; /* White background */
-  border-radius: 10px;
-  padding: 1.5em;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: column;
   align-items: center;
   max-width: 400px;
   margin: 1em auto;
   text-align: center;
+  background-color: rgba(255, 255, 255, 0.9); /* Slightly transparent background */
+  padding: 1.5em;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .icon-container {

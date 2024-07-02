@@ -6,15 +6,27 @@ const categories = ref([
   {
     name: "2k",
     records: [
-      { name: "100m Sprint", value: "9.58s", holder: "Usain Bolt", date: "2009-08-16" },
-      //   { name: "Marathon", value: "2:01:39", holder: "Eliud Kipchoge", date: "2018-09-16" },
+      { name: "2k", value: "6:13.9", holder: "Lucas Young", date: "2024" },
+      { name: "2k", value: "6:16.1", holder: "Marc Rizk", date: "2024" },
+      { name: "2k", value: "6:17.2", holder: "Richard Sollee", date: "2024" },
+      { name: "2k", value: "6:18.5", holder: "Harry Sillifant", date: "2023" },
+      { name: "2k", value: "6:18.6", holder: "Kieran Dunn", date: "2024" },
+      { name: "2k", value: "6:18.6", holder: "Peyton Worthington", date: "2023" },
+      { name: "2k", value: "6:20.4", holder: "Sam Costa", date: "2024" },
+      { name: "2k", value: "6:21.6", holder: "Stephen Freiberg", date: "2012" },
     ],
   },
   {
     name: "6k",
     records: [
-      // { name: "100m Freestyle", value: "46.91s", holder: "César Cielo", date: "2009-07-30" },
-      //   { name: "200m Butterfly", value: "1:50.73", holder: "Kristóf Milák", date: "2019-07-24" },
+      { name: "6k", value: "20:06.0", holder: "Lucas Young", date: "2023" },
+      { name: "6k", value: "20:06.8", holder: "Harry Sillifant", date: "2023" },
+      { name: "6k", value: "20:08.0", holder: "Stephen Freiberg", date: "2012" },
+      { name: "6k", value: "20:10.9", holder: "Marc Rizk", date: "2023" },
+      { name: "6k", value: "20:14.7", holder: "Richard Sollee", date: "2024" },
+      { name: "6k", value: "20:18.1", holder: "Sam Boshar", date: "2024" },
+      { name: "6k", value: "20:20.1", holder: "Kieran Dunn", date: "2023" },
+      { name: "6k", value: "20:23.7", holder: "Peyton Worthington", date: "2023" },
     ],
   },
   {
@@ -30,14 +42,12 @@ const categories = ref([
 <template>
   <div class="all-time-records">
     <h2>All-Time Records</h2>
-    <p>It will be updated soon. Here are just some dummy data for testing.</p>
     <div class="record-categories">
       <div class="record-category" v-for="category in categories" :key="category.name">
         <h3>{{ category.name }}</h3>
         <ul class="records-list">
           <li v-for="record in category.records" :key="record.name">
             <div class="record-info">
-              <span class="record-name">{{ record.name }}</span>
               <span class="record-value">{{ record.value }}</span>
             </div>
             <div class="record-holder">
@@ -125,6 +135,8 @@ const categories = ref([
 
 .record-holder {
   text-align: right;
+  display: flex;
+  gap: 10px; /* Adjust this value to give more or less space */
 }
 
 .record-holder-name {
